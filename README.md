@@ -40,13 +40,23 @@ Demonstrate your understanding of this Sprint's concepts by answering the follow
 
 - [ ] Mention two parts of Express that you learned about this week.
 
+I learned how to seperate your api through routers and that error handling is a lot easier with miiddileware
+
 - [ ] Describe Middleware?
+
+Middleware are short snippets of code you can write to send stuff to the server
 
 - [ ] Describe a Resource?
 
+A resource is an object the server is requesting that get returned by the API
+
 - [ ] What can the API return to help clients know if a request was successful?
 
+The API returns a 200 success code
+
 - [ ] How can we partition our application into sub-applications?
+
+By seperating our code and importing it and exporting it through modules
 
 ## Minimum Viable Product
 

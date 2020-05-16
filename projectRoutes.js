@@ -97,7 +97,6 @@ routes.post('/:id/actions', validateUserId, validateActions, async(req, res) => 
 
     try {
         const updateUserAction = await actionsBD.insert(req.body)
-        console.log(updateUserAction)
         if( updateUserAction) {
             res.status(200).send(updateUserAction)
         } else {
@@ -111,30 +110,21 @@ routes.post('/:id/actions', validateUserId, validateActions, async(req, res) => 
 //UPDATE a user actions and error handling
 routes.put('/:id/actions/:actionID', validateUserId, validateActionId, validateActions, async(req, res) => {
     const { actionID } = req.params;
-    console.log(actionID)
-    const updateUsersAction = await actionsBD.update(actionID, req.body)
-    console.log(updateUsersAction)
     try {
-        if( updateUser) {
-            res.status(200).send(updateUser)
-        } else {
-            IDNotInDB(res)
-        }
+        const updateUsersAction = await actionsBD.update(actionID, req.body)
+        console.log(updateUsersAction)
+        res.status(200).send(updateUsersAction)
     } catch {
         dbError(res)
     }
 })
 
-//UPDATE a user and error handling
-routes.delete('/:id/actions', validateProject, async(req, res) => {
-    const id = paramsId(req)
-    const updateUser = await projectsDB.update(id, req.body)
+//Delete a user and error handling
+routes.delete('/:id/actions/:actionID', validateUserId, validateActionId, async(req, res) => {
+    const { actionID } = req.params;
+    await actionsBD.remove(actionID)
     try {
-        if( updateUser) {
-            res.status(200).send(updateUser)
-        } else {
-            IDNotInDB(res)
-        }
+        res.status(200).send(`action id: ${actionID} has been removed`)
     } catch {
         dbError(res)
     }
@@ -200,15 +190,16 @@ function validateActions(req,res,next) {
     }
 }
 async function validateActionId(req, res, next) {
-// if the id parameter is valid, store that user object as req.user
 const { actionID } = req.params;
-  const actions = await actionsBD.get(actionID)
-  console.log(actions)
-  // if the id parameter does not match any user id in the database, cancel the request and respond with status 400 and { message: "invalid user id" } 
-  if(actions === null ) {
-      res.status(400).json({message: "Invalid action ID"})
+const userID = paramsId(req)
+  const action = await actionsBD.get(actionID)
+
+  if(action === null) {
+      res.status(404).json({message: "There is no action with that id"})
+} else if(action.project_id !== parseInt(userID)) {
+    res.status(404).json({message: "This user does not have any that action ID"})
     } else {
-      next()
+        next()
     }
 }
 
